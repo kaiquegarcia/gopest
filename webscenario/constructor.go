@@ -46,6 +46,7 @@ func New(test *testing.T, title string) *webScenario {
 		web.assertErrorIsNil(responses[1])
 		resp := responses[0].(*http.Response)
 		web.assertStatus(resp)
+		// TODO: web.assertRequests(resp)
 		web.assertJsonBody(resp)
 		// TODO: web.assertXmlBody(resp)
 		// TODO: web.assertHtmlBody(resp)

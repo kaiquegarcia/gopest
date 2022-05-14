@@ -147,6 +147,8 @@ func (web *webScenario) assertStatus(resp *http.Response) {
 	assert.Equal(web.test, web.expectedStatus, resp.StatusCode, "web-scenario %s - status code", web.title)
 }
 
+// TODO: func (web *webScenario) assertHeaders(resp *http.Response)
+
 func (web *webScenario) assertJsonBody(resp *http.Response) {
 	expect := web.prepareBody(web.expectedJsonBody)
 	if expect != "" {
