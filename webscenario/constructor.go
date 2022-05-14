@@ -20,12 +20,11 @@ type webScenario struct {
 	body             any
 	expectedStatus   int
 	expectedJsonBody any
+	// TODO: expectedXmlBody string
+	// TODO: expectedHtmlBody string
+	// TODO: expectedPlainTextBody string
+	// TODO: expectedRedirect ??
 }
-
-// TODO: expectedXmlBody
-// TODO: expectedHtmlBody
-// TODO: expectedPlainTextBody
-// TODO: expectedRedirect
 
 func New(test *testing.T, title string) *webScenario {
 	web := &webScenario{
@@ -40,6 +39,10 @@ func New(test *testing.T, title string) *webScenario {
 		body:             nil,
 		expectedStatus:   0,
 		expectedJsonBody: nil,
+		// TODO: expectedXmlBody: "",
+		// TODO: expectedHtmlBody: "",
+		// TODO: expectedPlainTextBody: "",
+		// TODO: expectedRedirect: ??,
 	}
 	web.Header("Content-Type", "text/html").
 		parent.ExpectWith(func(responses scenario.Responses) {
