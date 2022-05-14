@@ -27,6 +27,10 @@ func (web *webScenario) GivenFiber(app *fiber.App) *webScenario {
 	return web
 }
 
+// TODO: func (web *webScenario) GivenGin(...) *webScenario
+// TODO: func (web *webScenario) GivenChi(...) *webScenario
+// TODO: func (web *webScenario) GivenHttpServer(...) *webScenario
+
 func (web *webScenario) Header(key, value string) *webScenario {
 	web.headers[key] = value
 	return web
@@ -64,11 +68,19 @@ func (web *webScenario) FormBody(body FormBody) *webScenario {
 	return web
 }
 
+// TODO: func (web *webScenario) ExpectHeaders(headers Headers) *webScenario
+
 func (web *webScenario) ExpectJson(status int, body any) *webScenario {
 	web.expectedStatus = status
 	web.expectedJsonBody = body
 	return web
 }
+
+// TODO: func (web *webScenario) ExpectXml(status int, body string) *webScenario
+// TODO: func (web *webScenario) ExpectHtml(status int, body string) *webScenario
+// TODO: func (web *webScenario) ExpectPlainText(status int, body string) *webScenario
+// TODO: func (web *webScenario) ExpectPermanentRedirect(newRoute string) *webScenario
+// TODO: func (web *webScenario) ExpectTemporaryRedirect(newRoute string) *webScenario
 
 func (web *webScenario) Run() {
 	web.parent.Run()
