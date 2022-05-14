@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -19,6 +20,7 @@ import (
 func (web *webScenario) GivenFiber(app *fiber.App) *webScenario {
 	web.parent.When(func(args ...scenario.Argument) scenario.Responses {
 		req := httptest.NewRequest(string(web.method), web.prepareUrl(), web.prepareBodyReader())
+		web.injectForm(req)
 		web.injectHeaders(req)
 		return scenario.Output(app.Test(req, 10))
 	})
@@ -53,6 +55,15 @@ func (web *webScenario) JsonBody(body any) *webScenario {
 	return web
 }
 
+func (web *webScenario) FormBody(body FormBody) *webScenario {
+	web.form = url.Values{}
+	for key, value := range body {
+		web.form.Add(key, value)
+	}
+	web.body = nil
+	return web
+}
+
 func (web *webScenario) Expect(status int, body any) *webScenario {
 	web.expectedStatus = status
 	web.expectedBody = body
@@ -72,6 +83,10 @@ func (web *webScenario) prepareUrl() string {
 }
 
 func (web *webScenario) prepareBody(body any) string {
+	if body == nil {
+		return ""
+	}
+
 	if bodyStr, isString := web.body.(string); isString {
 		return bodyStr
 	}
@@ -86,6 +101,10 @@ func (web *webScenario) prepareBody(body any) string {
 
 func (web *webScenario) prepareBodyReader() io.Reader {
 	return bytes.NewBufferString(web.prepareBody(web.body))
+}
+
+func (web *webScenario) injectForm(req *http.Request) {
+	req.PostForm = web.form
 }
 
 func (web *webScenario) injectHeaders(req *http.Request) {
