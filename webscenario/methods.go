@@ -64,9 +64,9 @@ func (web *webScenario) FormBody(body FormBody) *webScenario {
 	return web
 }
 
-func (web *webScenario) Expect(status int, body any) *webScenario {
+func (web *webScenario) ExpectJson(status int, body any) *webScenario {
 	web.expectedStatus = status
-	web.expectedBody = body
+	web.expectedJsonBody = body
 	return web
 }
 
@@ -135,17 +135,22 @@ func (web *webScenario) assertStatus(resp *http.Response) {
 	assert.Equal(web.test, web.expectedStatus, resp.StatusCode, "web-scenario %s - status code", web.title)
 }
 
-func (web *webScenario) assertBody(resp *http.Response) {
-	expect := web.prepareBody(web.expectedBody)
+func (web *webScenario) assertJsonBody(resp *http.Response) {
+	expect := web.prepareBody(web.expectedJsonBody)
 	if expect != "" {
 		return
 	}
 
 	payload, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Printf("web-scenario %s failed while decoding response body", web.title)
+		fmt.Printf("web-scenario %s failed while decoding response JSON body", web.title)
 		web.test.FailNow()
 	}
 
 	jsonassert.New(web.test).Assertf(string(payload), expect)
 }
+
+// TODO: func (web *webScenario) assertXmlBody(resp *http.Response)
+// TODO: func (web *webScenario) assertHtmlBody(resp *http.Response)
+// TODO: func (web *webScenario) assertPlainTextBody(resp *http.Response)
+// TODO: func (web *webScenario) assertRedirect(resp *http.Response)
