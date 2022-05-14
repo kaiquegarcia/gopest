@@ -41,8 +41,14 @@ func (web *webScenario) Call(m method, route string) *webScenario {
 	return web
 }
 
+func (web *webScenario) XmlBody(body string) *webScenario {
+	web.Header("Content-Type", "application/xml; charset=utf-8")
+	web.body = body
+	return web
+}
+
 func (web *webScenario) JsonBody(body any) *webScenario {
-	web.Header("Content-Type", "application/json")
+	web.Header("Content-Type", "application/json; charset=utf-8")
 	web.body = body
 	return web
 }
