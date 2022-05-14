@@ -12,7 +12,7 @@ type webScenario struct {
 	parent         scenario.ScenarioInterface
 	test *testing.T
 	title string
-	method         string
+	method         method
 	route          string
 	headers        map[string]string
 	query          url.Values

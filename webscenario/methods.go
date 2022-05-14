@@ -18,7 +18,7 @@ import (
 
 func (web *webScenario) GivenFiber(app *fiber.App) *webScenario {
 	web.parent.When(func(args ...scenario.Argument) scenario.Responses {
-		req := httptest.NewRequest(web.method, web.prepareUrl(), web.prepareBodyReader())
+		req := httptest.NewRequest(string(web.method), web.prepareUrl(), web.prepareBodyReader())
 		web.injectHeaders(req)
 		return scenario.Output(app.Test(req, 10))
 	})
@@ -35,14 +35,8 @@ func (web *webScenario) Query(key, value string) *webScenario {
 	return web
 }
 
-func (web *webScenario) Get(route string) *webScenario {
-	web.method = http.MethodGet
-	web.route = route
-	return web
-}
-
-func (web *webScenario) Post(route string) *webScenario {
-	web.method = http.MethodPost
+func (web *webScenario) Call(m method, route string) *webScenario {
+	web.method = m
 	web.route = route
 	return web
 }
