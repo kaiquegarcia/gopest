@@ -1,8 +1,6 @@
 package scenario
 
-import (
-	"testing"
-)
+import "testing"
 
 type scenario struct {
 	test              *testing.T

@@ -10,6 +10,21 @@ type Asserter func(responses Responses)
 type PanicHandler func(err interface{})
 type ArgumentProvider func() []Arguments
 
+type ScenarioInterface interface {
+	Given(...Argument) *scenario
+	GivenProvider(ArgumentProvider) *scenario
+	When(Action) *scenario
+	Expect(...Response) *scenario
+	ExpectTrue() *scenario
+	ExpectFalse() *scenario
+	ExpectZero() *scenario
+	ExpectNil() *scenario
+	ExpectPanic(any) *scenario
+	ExpectWith(Asserter) *scenario
+	ExpectPanicWith(PanicHandler) *scenario
+	Run()
+}
+
 func Input(args ...Argument) Arguments {
 	return args
 }
