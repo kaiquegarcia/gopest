@@ -35,24 +35,21 @@ func (web *webScenario) Query(key, value string) *webScenario {
 	return web
 }
 
-func (web *webScenario) Get() *webScenario {
+func (web *webScenario) Get(route string) *webScenario {
 	web.method = http.MethodGet
+	web.route = route
 	return web
 }
 
-func (web *webScenario) Post() *webScenario {
+func (web *webScenario) Post(route string) *webScenario {
 	web.method = http.MethodPost
+	web.route = route
 	return web
 }
 
 func (web *webScenario) JsonBody(body any) *webScenario {
 	web.Header("Content-Type", "application/json")
 	web.body = body
-	return web
-}
-
-func (web *webScenario) To(route string) *webScenario {
-	web.route = route
 	return web
 }
 

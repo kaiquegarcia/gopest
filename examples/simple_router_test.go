@@ -13,8 +13,7 @@ func TestGetBlahRoute(t *testing.T) {
 	simpleRouter(app)
 	webscenario.New(t, "test GET /blah").
 		GivenFiber(app).
-		Get().
-		To("/blah").
+		Get("/blah").
 		Expect(http.StatusOK, `{"message": "ok"}`).
 		Run()
 }
@@ -24,9 +23,8 @@ func TestGetBlahCodeRoute(t *testing.T) {
 	simpleRouter(app)
 	webscenario.New(t, "test GET /blah-code").
 		GivenFiber(app).
-		Get().
+		Get("/blah-code").
 		Query("code", "myFirstCode").
-		To("/blah-code").
 		Expect(http.StatusOK, `{
 			"message": "ok",
 			"data": {
@@ -41,11 +39,10 @@ func TestPostBlahRoute(t *testing.T) {
 	simpleRouter(app)
 	webscenario.New(t, "test POST /blah").
 		GivenFiber(app).
-		Post().
+		Post("/blah").
 		JsonBody(map[string]interface{}{
 			"code": "mySecondCode",
 		}).
-		To("/blah").
 		Expect(http.StatusOK, `{
 			"message": "ok",
 			"data": {
