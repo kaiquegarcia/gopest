@@ -20,7 +20,7 @@ type webScenario struct {
 	body             any
 	expectedStatus   int
 	expectedJsonBody any
-	// TODO: expectedXmlBody string
+	// TODO: expectedXmlNodes map[string]string - https://pkg.go.dev/gopkg.in/xmlpath.v2
 	// TODO: expectedHtmlBody string
 	// TODO: expectedPlainTextBody string
 	// TODO: expectedRedirect ??
@@ -39,7 +39,7 @@ func New(test *testing.T, title string) *webScenario {
 		body:             nil,
 		expectedStatus:   0,
 		expectedJsonBody: nil,
-		// TODO: expectedXmlBody: "",
+		// TODO: expectedXmlNodes: make(map[string]string) - https://pkg.go.dev/gopkg.in/xmlpath.v2
 		// TODO: expectedHtmlBody: "",
 		// TODO: expectedPlainTextBody: "",
 		// TODO: expectedRedirect: ??,

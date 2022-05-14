@@ -76,7 +76,7 @@ func (web *webScenario) ExpectJson(status int, body any) *webScenario {
 	return web
 }
 
-// TODO: func (web *webScenario) ExpectXml(status int, body string) *webScenario
+// TODO: func (web *webScenario) ExpectXml(status int, nodes map[string]string) *webScenario - https://pkg.go.dev/gopkg.in/xmlpath.v2
 // TODO: func (web *webScenario) ExpectHtml(status int, body string) *webScenario
 // TODO: func (web *webScenario) ExpectPlainText(status int, body string) *webScenario
 // TODO: func (web *webScenario) ExpectPermanentRedirect(newRoute string) *webScenario
@@ -164,7 +164,7 @@ func (web *webScenario) assertJsonBody(resp *http.Response) {
 	jsonassert.New(web.test).Assertf(string(payload), expect)
 }
 
-// TODO: func (web *webScenario) assertXmlBody(resp *http.Response)
+// TODO: func (web *webScenario) assertXmlBody(resp *http.Response) - use https://pkg.go.dev/gopkg.in/xmlpath.v2
 // TODO: func (web *webScenario) assertHtmlBody(resp *http.Response)
 // TODO: func (web *webScenario) assertPlainTextBody(resp *http.Response)
 // TODO: func (web *webScenario) assertRedirect(resp *http.Response)
