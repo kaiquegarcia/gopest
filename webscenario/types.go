@@ -5,7 +5,7 @@ import "net/http"
 type any interface{}
 type FormBody map[string]string
 type method string
-// TODO: type Headers map[string]string
+type headers map[string]string
 
 const (
 	MethodConnect method = http.MethodConnect

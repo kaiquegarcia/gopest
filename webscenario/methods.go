@@ -68,7 +68,7 @@ func (web *webScenario) FormBody(body FormBody) *webScenario {
 	return web
 }
 
-// TODO: func (web *webScenario) ExpectHeaders(headers Headers) *webScenario
+// TODO: func (web *webScenario) ExpectHeaders(headers headers) *webScenario
 
 func (web *webScenario) ExpectJson(status int, body any) *webScenario {
 	web.expectedStatus = status

@@ -14,7 +14,7 @@ type webScenario struct {
 	title            string
 	method           method
 	route            string
-	headers          map[string]string
+	headers          headers
 	query            url.Values
 	form             url.Values
 	body             any
