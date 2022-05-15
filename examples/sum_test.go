@@ -67,7 +67,7 @@ func TestShouldExpectPanic(t *testing.T) {
 }
 
 func TestShouldExpectWith(t *testing.T) {
-	scenario.New(t, "should assert panic").
+	scenario.New(t, "should assert with closure").
 		Given(123, 27).
 		When(func(args ...scenario.Argument) scenario.Responses {
 			return scenario.Output(Sum(args[0].(int), args[1].(int)))
@@ -79,7 +79,7 @@ func TestShouldExpectWith(t *testing.T) {
 }
 
 func TestShouldExpectPanicWith(t *testing.T) {
-	scenario.New(t, "should assert panic").
+	scenario.New(t, "should assert panic with closure").
 		When(func(args ...scenario.Argument) scenario.Responses {
 			panic("please don't do that")
 		}).
