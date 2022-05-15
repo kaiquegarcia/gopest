@@ -3,13 +3,13 @@ package webscenario
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
+	"testing"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/kaiquegarcia/gopest/scenario"
@@ -129,27 +129,27 @@ func (web *webScenario) injectHeaders(req *http.Request) {
 	}
 }
 
-func (web *webScenario) assertErrorIsNil(err any) {
+func (web *webScenario) assertErrorIsNil(t *testing.T, err any) {
 	if err == nil {
 		return
 	}
 	if responseError := err.(error); responseError != nil {
-		fmt.Printf("web-scenario %s failed while sending request\n", web.title)
-		web.test.FailNow()
+		t.Fatalf("web-scenario %s failed while sending request\n", web.title)
+		t.FailNow()
 	}
 }
 
-func (web *webScenario) assertStatus(resp *http.Response) {
+func (web *webScenario) assertStatus(t *testing.T, resp *http.Response) {
 	if web.expectedStatus == 0 {
 		return
 	}
 
-	assert.Equal(web.test, web.expectedStatus, resp.StatusCode, "web-scenario %s - status code", web.title)
+	assert.Equal(t, web.expectedStatus, resp.StatusCode, "web-scenario %s - status code", web.title)
 }
 
-// TODO: func (web *webScenario) assertHeaders(resp *http.Response)
+// TODO: func (web *webScenario) assertHeaders(t *testing.T, resp *http.Response)
 
-func (web *webScenario) assertJsonBody(resp *http.Response) {
+func (web *webScenario) assertJsonBody(t *testing.T, resp *http.Response) {
 	expect := web.prepareBody(web.expectedJsonBody)
 	if expect != "" {
 		return
@@ -157,14 +157,14 @@ func (web *webScenario) assertJsonBody(resp *http.Response) {
 
 	payload, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Printf("web-scenario %s failed while decoding response JSON body", web.title)
-		web.test.FailNow()
+		t.Fatalf("web-scenario %s failed while decoding response JSON body", web.title)
+		t.FailNow()
 	}
 
-	jsonassert.New(web.test).Assertf(string(payload), expect)
+	jsonassert.New(t).Assertf(string(payload), expect)
 }
 
-// TODO: func (web *webScenario) assertXmlBody(resp *http.Response) - use https://pkg.go.dev/gopkg.in/xmlpath.v2
-// TODO: func (web *webScenario) assertHtmlBody(resp *http.Response)
-// TODO: func (web *webScenario) assertPlainTextBody(resp *http.Response)
-// TODO: func (web *webScenario) assertRedirect(resp *http.Response)
+// TODO: func (web *webScenario) assertXmlBody(t *testing.T, resp *http.Response) - use https://pkg.go.dev/gopkg.in/xmlpath.v2
+// TODO: func (web *webScenario) assertHtmlBody(t *testing.T, resp *http.Response)
+// TODO: func (web *webScenario) assertPlainTextBody(t *testing.T, resp *http.Response)
+// TODO: func (web *webScenario) assertRedirect(t *testing.T, resp *http.Response)

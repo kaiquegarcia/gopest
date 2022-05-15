@@ -45,16 +45,16 @@ func New(test *testing.T, title string) *webScenario {
 		// TODO: expectedRedirect: ??,
 	}
 	web.Header("Content-Type", "text/html").
-		parent.ExpectWith(func(responses scenario.Responses) {
-		web.assertErrorIsNil(responses[1])
+		parent.ExpectWith(func(t *testing.T, responses scenario.Responses) {
+		web.assertErrorIsNil(t, responses[1])
 		resp := responses[0].(*http.Response)
-		web.assertStatus(resp)
-		// TODO: web.assertRequests(resp)
-		web.assertJsonBody(resp)
-		// TODO: web.assertXmlBody(resp)
-		// TODO: web.assertHtmlBody(resp)
-		// TODO: web.assertPlainTextBody(resp)
-		// TODO: web.assertRedirect(resp)
+		web.assertStatus(t, resp)
+		// TODO: web.assertHeaders(t, resp)
+		web.assertJsonBody(t, resp)
+		// TODO: web.assertXmlBody(t, resp)
+		// TODO: web.assertHtmlBody(t, resp)
+		// TODO: web.assertPlainTextBody(t, resp)
+		// TODO: web.assertRedirect(t, resp)
 	})
 	return web
 }
