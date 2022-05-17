@@ -1,11 +1,23 @@
 package webscenario
 
-import "net/http"
+import (
+	"net/http"
+
+	"gopkg.in/xmlpath.v2"
+)
 
 type any interface{}
 type FormBody map[string]string
 type method string
 type headers map[string]string
+type xmlNodes map[string]node
+
+type node struct {
+	path string
+	expectedValue string
+	compiler *xmlpath.Path
+}
+// TODO: type htmlNodes map[string]node
 
 const (
 	MethodConnect method = http.MethodConnect

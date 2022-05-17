@@ -14,7 +14,8 @@ func TestGetBlahRoute(t *testing.T) {
 	webscenario.New(t, "test GET /blah").
 		GivenFiber(app).
 		Call(http.MethodGet, "/blah").
-		ExpectJson(http.StatusOK, `{"message": "ok"}`).
+		ExpectHttpStatus(http.StatusOK).
+		ExpectJson(`{"message": "ok"}`).
 		Run()
 }
 
@@ -25,7 +26,8 @@ func TestGetBlahCodeRoute(t *testing.T) {
 		GivenFiber(app).
 		Call(http.MethodGet, "/blah-code").
 		Query("code", "myFirstCode").
-		ExpectJson(http.StatusOK, `{
+		ExpectHttpStatus(http.StatusOK).
+		ExpectJson(`{
 			"message": "ok",
 			"data": {
 				"code": "myFirstCode"
@@ -43,11 +45,24 @@ func TestPostBlahRoute(t *testing.T) {
 		JsonBody(map[string]interface{}{
 			"code": "mySecondCode",
 		}).
-		ExpectJson(http.StatusOK, `{
+		ExpectHttpStatus(http.StatusOK).
+		ExpectJson(`{
 			"message": "ok",
 			"data": {
 				"code": "mySecondCode"
 			}
 		}`).
+		Run()
+}
+
+func TestGetXmlRoute(t *testing.T) {
+	app := fiber.New()
+	simpleRouter(app)
+	webscenario.New(t, "test GET /xml").
+		GivenFiber(app).
+		Call(http.MethodGet, "/xml").
+		ExpectHttpStatus(http.StatusOK).
+		ExpectXmlNode("/codes/code[1]", "myThirdCode").
+		ExpectXmlNode("/codes/code[2]/random-path", "blah").
 		Run()
 }

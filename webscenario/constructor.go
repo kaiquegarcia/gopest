@@ -20,8 +20,8 @@ type webScenario struct {
 	body             any
 	expectedStatus   int
 	expectedJsonBody any
-	// TODO: expectedXmlNodes map[string]string - https://pkg.go.dev/gopkg.in/xmlpath.v2
-	// TODO: expectedHtmlBody string
+	expectedXmlNodes xmlNodes
+	// TODO: expectedHtmlNodes htmlNodes
 	// TODO: expectedPlainTextBody string
 	// TODO: expectedRedirect ??
 }
@@ -39,8 +39,8 @@ func New(test *testing.T, title string) *webScenario {
 		body:             nil,
 		expectedStatus:   0,
 		expectedJsonBody: nil,
-		// TODO: expectedXmlNodes: make(map[string]string) - https://pkg.go.dev/gopkg.in/xmlpath.v2
-		// TODO: expectedHtmlBody: "",
+		expectedXmlNodes: make(xmlNodes),
+		// TODO: expectedHtmlNodes: make(htmlNodes),
 		// TODO: expectedPlainTextBody: "",
 		// TODO: expectedRedirect: ??,
 	}
@@ -51,8 +51,8 @@ func New(test *testing.T, title string) *webScenario {
 		web.assertStatus(t, resp)
 		// TODO: web.assertHeaders(t, resp)
 		web.assertJsonBody(t, resp)
-		// TODO: web.assertXmlBody(t, resp)
-		// TODO: web.assertHtmlBody(t, resp)
+		web.assertXmlNodes(t, resp)
+		// TODO: web.assertHtmlNodes(t, resp)
 		// TODO: web.assertPlainTextBody(t, resp)
 		// TODO: web.assertRedirect(t, resp)
 	})

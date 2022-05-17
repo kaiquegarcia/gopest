@@ -15,6 +15,7 @@ import (
 	"github.com/kaiquegarcia/gopest/scenario"
 	"github.com/kinbiko/jsonassert"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/xmlpath.v2"
 )
 
 func (web *webScenario) GivenFiber(app *fiber.App) *webScenario {
@@ -68,17 +69,31 @@ func (web *webScenario) FormBody(body FormBody) *webScenario {
 	return web
 }
 
-// TODO: func (web *webScenario) ExpectHeaders(headers headers) *webScenario
+// TODO: func (web *webScenario) ExpectHeader(key, expectedValue string) *webScenario
 
-func (web *webScenario) ExpectJson(status int, body any) *webScenario {
+func (web *webScenario) ExpectHttpStatus(status int) *webScenario {
 	web.expectedStatus = status
+	return web
+}
+
+func (web *webScenario) ExpectJson(body any) *webScenario {
+	// TODO: web.ExpectHeader("Content-Type", "application/json")
 	web.expectedJsonBody = body
 	return web
 }
 
-// TODO: func (web *webScenario) ExpectXml(status int, nodes map[string]string) *webScenario - https://pkg.go.dev/gopkg.in/xmlpath.v2
-// TODO: func (web *webScenario) ExpectHtml(status int, body string) *webScenario
-// TODO: func (web *webScenario) ExpectPlainText(status int, body string) *webScenario
+func (web *webScenario) ExpectXmlNode(path, expectedValue string) *webScenario {
+	// TODO: web.ExpectHeader("Content-Type", "application/xml")
+	web.expectedXmlNodes[path] = node{
+		path: path,
+		expectedValue: expectedValue,
+		compiler: xmlpath.MustCompile(path),
+	}
+	return web
+}
+
+// TODO: func (web *webScenario) ExpectHtmlNode(path, expectedValue string) *webScenario
+// TODO: func (web *webScenario) ExpectPlainText(body string) *webScenario
 // TODO: func (web *webScenario) ExpectPermanentRedirect(newRoute string) *webScenario
 // TODO: func (web *webScenario) ExpectTemporaryRedirect(newRoute string) *webScenario
 
@@ -151,7 +166,7 @@ func (web *webScenario) assertStatus(t *testing.T, resp *http.Response) {
 
 func (web *webScenario) assertJsonBody(t *testing.T, resp *http.Response) {
 	expect := web.prepareBody(web.expectedJsonBody)
-	if expect != "" {
+	if expect == "" {
 		return
 	}
 
@@ -164,7 +179,35 @@ func (web *webScenario) assertJsonBody(t *testing.T, resp *http.Response) {
 	jsonassert.New(t).Assertf(string(payload), expect)
 }
 
-// TODO: func (web *webScenario) assertXmlBody(t *testing.T, resp *http.Response) - use https://pkg.go.dev/gopkg.in/xmlpath.v2
-// TODO: func (web *webScenario) assertHtmlBody(t *testing.T, resp *http.Response)
+func (web *webScenario) assertXmlNodes(t *testing.T, resp *http.Response) {
+	if web.expectedXmlNodes == nil || len(web.expectedXmlNodes) == 0 {
+		return
+	}
+	payload, readErr := ioutil.ReadAll(resp.Body)
+	if readErr != nil {
+		t.Fatalf("web-scenario %s failed while decoding response JSON body", web.title)
+		t.FailNow()
+	}
+
+	ctx, parseErr := xmlpath.Parse(strings.NewReader(string(payload)))
+	if parseErr != nil {
+		t.Fatalf("web-scenario %s failed - could not parse XML: %s", web.title, parseErr.Error())
+		t.FailNow()
+	}
+
+	for path, node := range web.expectedXmlNodes {
+		value, exists := node.compiler.String(ctx)
+		if !exists {
+			t.Fatalf("web-scenario %s failed - path %s does not exists", web.title, path)
+			t.Fail()
+			continue
+		}
+
+		assert.Equalf(t, node.expectedValue, value, "web-scenario %s - asserting XML value", web.title)
+	}
+}
+
+// TODO: func (web *webScenario) assertXmlNodes(t *testing.T, resp *http.Response) - use https://pkg.go.dev/gopkg.in/xmlpath.v2
+// TODO: func (web *webScenario) assertHtmlNodes(t *testing.T, resp *http.Response)
 // TODO: func (web *webScenario) assertPlainTextBody(t *testing.T, resp *http.Response)
 // TODO: func (web *webScenario) assertRedirect(t *testing.T, resp *http.Response)

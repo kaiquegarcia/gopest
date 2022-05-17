@@ -1,6 +1,10 @@
 package examples
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"net/http"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 type httpResponse struct {
 	Message string `json:"message"`
@@ -48,5 +52,14 @@ func simpleRouter(app *fiber.App) {
 		}
 
 		return c.JSON(successResponse(req.Code))
+	})
+
+	app.Get("/xml", func(c *fiber.Ctx) error {
+		if err := c.SendStatus(http.StatusOK); err != nil {
+			return err
+		}
+
+		c.Context().SetContentType("application/xml")
+		return c.SendString("<codes><code>myThirdCode</code><code><random-path>blah</random-path></code></codes>")
 	})
 }
