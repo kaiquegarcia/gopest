@@ -20,8 +20,7 @@ import (
 
 func (web *webScenario) GivenFiber(app *fiber.App) *webScenario {
 	web.parent.When(func(args ...scenario.Argument) scenario.Responses {
-		req := httptest.NewRequest(string(web.method), web.prepareUrl(), web.prepareBodyReader())
-		web.injectForm(req)
+		req := httptest.NewRequest(string(web.method), web.encodeURL(), web.encodeBodyReader())
 		web.injectHeaders(req)
 		return scenario.Output(app.Test(req, 10))
 	})
@@ -61,6 +60,8 @@ func (web *webScenario) JsonBody(body any) *webScenario {
 }
 
 func (web *webScenario) FormBody(body FormBody) *webScenario {
+	web.Header("Content-Type", "application/x-www-form-urlencoded")
+	
 	web.form = url.Values{}
 	for key, value := range body {
 		web.form.Add(key, value)
@@ -101,7 +102,7 @@ func (web *webScenario) Run() {
 	web.parent.Run()
 }
 
-func (web *webScenario) prepareUrl() string {
+func (web *webScenario) encodeURL() string {
 	route := []string{web.route}
 	if query := web.query.Encode(); query != "" {
 		route = append(route, query)
@@ -109,12 +110,12 @@ func (web *webScenario) prepareUrl() string {
 	return strings.Join(route, "?")
 }
 
-func (web *webScenario) prepareBody(body any) string {
+func (web *webScenario) encodeBody(body any) string {
 	if body == nil {
 		return ""
 	}
 
-	if bodyStr, isString := web.body.(string); isString {
+	if bodyStr, isString := body.(string); isString {
 		return bodyStr
 	}
 
@@ -126,12 +127,14 @@ func (web *webScenario) prepareBody(body any) string {
 	return string(bodyBytes)
 }
 
-func (web *webScenario) prepareBodyReader() io.Reader {
-	return bytes.NewBufferString(web.prepareBody(web.body))
-}
-
-func (web *webScenario) injectForm(req *http.Request) {
-	req.PostForm = web.form
+func (web *webScenario) encodeBodyReader() io.Reader {
+	var body string
+	if bodyStr := web.encodeBody(web.body); bodyStr != "" {
+		body = bodyStr
+	} else if len(web.form) > 0 {
+		body = web.form.Encode()
+	}
+	return bytes.NewBufferString(body)
 }
 
 func (web *webScenario) injectHeaders(req *http.Request) {
@@ -165,7 +168,7 @@ func (web *webScenario) assertStatus(t *testing.T, resp *http.Response) {
 // TODO: func (web *webScenario) assertHeaders(t *testing.T, resp *http.Response)
 
 func (web *webScenario) assertJsonBody(t *testing.T, resp *http.Response) {
-	expect := web.prepareBody(web.expectedJsonBody)
+	expect := web.encodeBody(web.expectedJsonBody)
 	if expect == "" {
 		return
 	}

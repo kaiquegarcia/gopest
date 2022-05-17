@@ -12,7 +12,7 @@ type httpResponse struct {
 }
 
 type httpRequest struct {
-	Code string `json:"code" query:"code"`
+	Code string `json:"code" query:"code" form:"code"`
 }
 
 func successResponse(code string) httpResponse {
@@ -45,6 +45,17 @@ func simpleRouter(app *fiber.App) {
 
 	app.Post("/blah", func(c *fiber.Ctx) error {
 		c.Accepts("application/json")
+		req := httpRequest{}
+
+		if err := c.BodyParser(&req); err != nil {
+			return c.JSON(errorResponse("could not parse body", err))
+		}
+
+		return c.JSON(successResponse(req.Code))
+	})
+
+	app.Post("/form", func(c *fiber.Ctx) error {
+		c.Accepts("application/x-www-form-urlencoded")
 		req := httpRequest{}
 
 		if err := c.BodyParser(&req); err != nil {

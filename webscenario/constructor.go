@@ -33,7 +33,9 @@ func New(test *testing.T, title string) *webScenario {
 		title:            title,
 		method:           http.MethodGet,
 		route:            "",
-		headers:          make(map[string]string),
+		headers:          map[string]string{
+			"Content-Type": "text/html",
+		},
 		query:            url.Values{},
 		form:             url.Values{},
 		body:             nil,
@@ -44,8 +46,7 @@ func New(test *testing.T, title string) *webScenario {
 		// TODO: expectedPlainTextBody: "",
 		// TODO: expectedRedirect: ??,
 	}
-	web.Header("Content-Type", "text/html").
-		parent.ExpectWith(func(t *testing.T, responses scenario.Responses) {
+	web.parent.ExpectWith(func(t *testing.T, responses scenario.Responses) {
 		web.assertErrorIsNil(t, responses[1])
 		resp := responses[0].(*http.Response)
 		web.assertStatus(t, resp)
