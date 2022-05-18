@@ -61,7 +61,7 @@ func (web *webScenario) JsonBody(body any) *webScenario {
 
 func (web *webScenario) FormBody(body FormBody) *webScenario {
 	web.Header("Content-Type", "application/x-www-form-urlencoded")
-	
+
 	web.form = url.Values{}
 	for key, value := range body {
 		web.form.Add(key, value)
@@ -70,7 +70,13 @@ func (web *webScenario) FormBody(body FormBody) *webScenario {
 	return web
 }
 
-// TODO: func (web *webScenario) ExpectHeader(key, expectedValue string) *webScenario
+func (web *webScenario) ExpectHeader(key, expectedValue string) *webScenario {
+	if _, exists := web.expectedHeaders[key]; !exists {
+		web.expectedHeaders[key] = make([]string, 0)
+	}
+	web.expectedHeaders[key] = append(web.expectedHeaders[key], expectedValue)
+	return web
+}
 
 func (web *webScenario) ExpectHttpStatus(status int) *webScenario {
 	web.expectedStatus = status
@@ -78,17 +84,17 @@ func (web *webScenario) ExpectHttpStatus(status int) *webScenario {
 }
 
 func (web *webScenario) ExpectJson(body any) *webScenario {
-	// TODO: web.ExpectHeader("Content-Type", "application/json")
+	web.ExpectHeader("Content-Type", "application/json")
 	web.expectedJsonBody = body
 	return web
 }
 
 func (web *webScenario) ExpectXmlNode(path, expectedValue string) *webScenario {
-	// TODO: web.ExpectHeader("Content-Type", "application/xml")
+	web.ExpectHeader("Content-Type", "application/xml")
 	web.expectedXmlNodes[path] = node{
-		path: path,
+		path:          path,
 		expectedValue: expectedValue,
-		compiler: xmlpath.MustCompile(path),
+		compiler:      xmlpath.MustCompile(path),
 	}
 	return web
 }
@@ -165,7 +171,17 @@ func (web *webScenario) assertStatus(t *testing.T, resp *http.Response) {
 	assert.Equal(t, web.expectedStatus, resp.StatusCode, "web-scenario %s - status code", web.title)
 }
 
-// TODO: func (web *webScenario) assertHeaders(t *testing.T, resp *http.Response)
+func (web *webScenario) assertHeaders(t *testing.T, resp *http.Response) {
+	if len(web.expectedHeaders) == 0 {
+		return
+	}
+
+	for key, expectedValues := range web.expectedHeaders {
+		for _, expectedValue := range expectedValues {
+			assert.Containsf(t, expectedValue, resp.Header.Get(key), "web-scenario %s - header[%s] assertion for value %s", web.title, key, expectedValue)
+		}
+	}
+}
 
 func (web *webScenario) assertJsonBody(t *testing.T, resp *http.Response) {
 	expect := web.encodeBody(web.expectedJsonBody)

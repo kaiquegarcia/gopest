@@ -10,6 +10,7 @@ type any interface{}
 type FormBody map[string]string
 type method string
 type headers map[string]string
+type headerExpectations map[string][]string
 type xmlNodes map[string]node
 
 type node struct {
