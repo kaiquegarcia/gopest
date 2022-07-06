@@ -73,4 +73,26 @@ func simpleRouter(app *fiber.App) {
 		c.Context().SetContentType("application/xml")
 		return c.SendString("<codes><code>myThirdCode</code><code><random-path>blah</random-path></code></codes>")
 	})
+
+	app.Get("/html", func(c *fiber.Ctx) error {
+		if err := c.SendStatus(http.StatusOK); err != nil {
+			return err
+		}
+
+		c.Context().SetContentType("text/html")
+		return c.SendString(`<!DOCTYPE HTML>
+		<html>
+			<head>
+				<title>My Website</title>
+			</head>
+			<body>
+				<header>
+					<div class="logo">My Logo</div>
+					<div>Other div</div>
+				</header>
+				<footer>My Footer</footer>
+				<div id="lost-div">nothing to see over there</div>
+			</body>
+		</html>`)
+	})
 }
