@@ -120,7 +120,11 @@ This package is specially made to run End-to-End Tests, making test requests to 
 #### Guide
 
 1. As all the previous guides, start the scenario calling `webscenario.New()` with 2 arguments: the `*testing.T` you receive in every test function and a `string` to describe which scenario you're testing;
-2. The second step is to call the method `Given{webframework}`, where `{webframework}` should be the framework you use in your webserve. Currently we support `Fiber` only (please open an issue or start your own implementation to add more options!), so you can call `GivenFiber`. PS.: you need to inject an instance of `*fiber.App` with the desired route implemented;
+2. The second step is to call the method `Given{webframework}`, where `{webframework}` should be the framework you use in your webserve. Currently we support `Fiber` and `Chi` only (please open an issue or start your own implementation to add more options!), so you can call `GivenFiber` or `GivenChi`.
+
+    PS.: in case of `GivenFiber`, you need to inject an instance of `*fiber.App` with the desired route implemented;
+
+    PS.2: in case of `GivenChi`, you need to inject a customizer function to inject the desired routes to be implemented. You can also inject middlewares.
 3. Then you need to call the method `Call()` with two arguments: a `string` with the desired request method (`http.MethodPost`, for example) and another `string` with the desired route (`/my-route`);
 4. After that, you can inject values to your requests with the following options:
     - use `Header` to set a `string` to a specific key, that'll compose the request headers (`Content-type=text/html`);
@@ -174,7 +178,6 @@ Please make sure to update tests as appropriate.
 - Add `ExpectPlainText` to `webscenario` pkg;
 - Add `ExpectPermanentRedirect` to `webscenario` pkg;
 - Add `ExpectTemporaryRedirect` to `webscenario` pkg;
-- Add `GivenChi` to `webscenario` pkg;
 - Add `GivenGin` to `webscenario` pkg;
 - Add `GivenHttpServer` to `webscenario` pkg;
 - Add more examples running each case described in the docs.
