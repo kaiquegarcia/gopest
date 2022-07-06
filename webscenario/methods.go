@@ -49,7 +49,6 @@ func (web *webScenario) GivenChi(customizer func(*chi.Mux)) *webScenario {
 }
 
 // TODO: func (web *webScenario) GivenGin(...) *webScenario
-// TODO: func (web *webScenario) GivenChi(...) *webScenario
 // TODO: func (web *webScenario) GivenHttpServer(...) *webScenario
 
 func (web *webScenario) Header(key, value string) *webScenario {
