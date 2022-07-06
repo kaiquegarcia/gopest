@@ -3,6 +3,7 @@ module github.com/kaiquegarcia/gopest
 go 1.17
 
 require (
+	github.com/go-chi/chi/v5 v5.0.7
 	github.com/gofiber/fiber/v2 v2.33.0
 	github.com/kinbiko/jsonassert v1.1.0
 	github.com/stretchr/testify v1.7.1
@@ -12,7 +13,6 @@ require (
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.0 // indirect
-	github.com/go-chi/chi/v5 v5.0.7 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
