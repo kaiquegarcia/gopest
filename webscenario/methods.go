@@ -302,7 +302,7 @@ func (web *webScenario) assertPlainTextBody(t *testing.T, resp *http.Response) {
 	}
 
 	payload := web.decodeBody(t, resp)
-	assert.Equal(t, web.expectedPlainTextBody, payload)
+	assert.Equalf(t, web.expectedPlainTextBody, payload, "web-scenario %s - asserting plain-text value", web.title)
 }
 
 // TODO: func (web *webScenario) assertRedirect(t *testing.T, resp *http.Response)
