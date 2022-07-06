@@ -85,3 +85,20 @@ func TestPostFormRoute(t *testing.T) {
 		}`).
 		Run()
 }
+
+func TestGetHtmlRoute(t *testing.T) {
+	app := fiber.New()
+	simpleRouter(app)
+	webscenario.New(t, "test GET html").
+		GivenFiber(app).
+		Call(http.MethodGet, "/html").
+		ExpectHttpStatus(http.StatusOK).
+		ExpectHtmlNode("/html/head/title", "My Website").
+		ExpectHtmlNode("/html/body/header/div[1]", "My Logo").
+		ExpectHtmlNode("/html/body/header/div[@class='logo']", "My Logo").
+		ExpectHtmlNode("//div[@class='logo']", "My Logo").
+		ExpectHtmlNode("/html/body/header/div[2]", "Other div").
+		ExpectHtmlNode("/html/body/footer", "My Footer").
+		ExpectHtmlNode("//div[@id='lost-div']", "nothing to see over there").
+		Run()
+}

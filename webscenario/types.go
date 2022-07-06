@@ -12,13 +12,13 @@ type method string
 type headers map[string]string
 type headerExpectations map[string][]string
 type xmlNodes map[string]node
+type htmlNodes map[string]node
 
 type node struct {
 	path string
 	expectedValue string
 	compiler *xmlpath.Path
 }
-// TODO: type htmlNodes map[string]node
 
 const (
 	MethodConnect method = http.MethodConnect
