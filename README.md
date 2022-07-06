@@ -135,9 +135,10 @@ This package is specially made to run End-to-End Tests, making test requests to 
 5. Now you can register all your expectations. Here's your options:
     - use `ExpectHeader` to register each key and expected value you expect to receive in the request Header;
     - use `ExpectHttpStatus` to register which HTTP Status you expect to receive in the request;
-    - use `ExpectJson` to register which JSON body you expect to receive in the request Body. This assertion is made with `jsonassert.Assertf()` from [kinbiko/jsonassert@v1.1.0](https://github.com/kinbiko/jsonassert) module. You can use all the features described here;
-    - use `ExpectXmlNode` to register each XML Path and expected value you expect to receive in the request Body. This assertion is made with `xmlpath.MustCompile` from [gopkg.in/xmlpath.v2](https://gopkg.in/xmlpath.v2) module. You can use all the features described there;
-    - use `ExpectHtmlNode` to register each HTML Path and expected value you expect to receive in the request Body. This assertion is also made with `xmlpath.MustCompile` from [gopkg.in/xmlpath.v2](https://gopkg.in/xmlpath.v2) module. You can use all the features described there;
+    - use `ExpectJson` to register which JSON body you expect to receive in the request Body. This assertion is made with `jsonassert.Assertf()` from [kinbiko/jsonassert@v1.1.0](https://github.com/kinbiko/jsonassert) module. You can use all the features described here. You can use all the features described there. This will call `ExpectHeader("Content-Type", "application/json")` automatically. You can override it by calling the `ExpectHeader` option after this;
+    - use `ExpectXmlNode` to register each XML Path and expected value you expect to receive in the request Body. This assertion is made with `xmlpath.MustCompile` from [gopkg.in/xmlpath.v2](https://gopkg.in/xmlpath.v2) module. You can use all the features described there. You can use all the features described there. This will call `ExpectHeader("Content-Type", "application/xml")` automatically. You can override it by calling the `ExpectHeader` option after this;
+    - use `ExpectHtmlNode` to register each HTML Path and expected value you expect to receive in the request Body. This assertion is also made with `xmlpath.MustCompile` from [gopkg.in/xmlpath.v2](https://gopkg.in/xmlpath.v2) module. You can use all the features described there. This will call `ExpectHeader("Content-Type", "text/html")` automatically. You can override it by calling the `ExpectHeader` option after this;
+    - use `ExpectPlainText` to register the exact body you expect to receive from response;
 6. And finally call `Run()`!
 
 #### Example
@@ -175,7 +176,6 @@ Please make sure to update tests as appropriate.
 
 ## Roadmap
 
-- Add `ExpectPlainText` to `webscenario` pkg;
 - Add `ExpectPermanentRedirect` to `webscenario` pkg;
 - Add `ExpectTemporaryRedirect` to `webscenario` pkg;
 - Add `GivenGin` to `webscenario` pkg;
