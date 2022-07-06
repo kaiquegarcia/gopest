@@ -11,6 +11,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kaiquegarcia/gopest/scenario"
 	"github.com/kinbiko/jsonassert"
@@ -27,8 +28,27 @@ func (web *webScenario) GivenFiber(app *fiber.App) *webScenario {
 	return web
 }
 
+func (web *webScenario) GivenChi(customizer func(*chi.Mux)) *webScenario {
+	mux := chi.NewRouter()
+	customizer(mux)
+	server := httptest.NewServer(mux)
+
+	web.parent.When(func(args ...scenario.Argument) scenario.Responses {
+		URL := server.URL + web.encodeURL()
+		req, err := http.NewRequest(string(web.method), URL, web.encodeBodyReader())
+		if err != nil {
+			web.test.Fatalf("could not initialize the request: %v\n", err)
+			web.test.FailNow()
+		}
+		web.injectHeaders(req)
+
+		return scenario.Output(http.DefaultClient.Do(req))
+	})
+	web.onTearDown(server.Close)
+	return web
+}
+
 // TODO: func (web *webScenario) GivenGin(...) *webScenario
-// TODO: func (web *webScenario) GivenChi(...) *webScenario
 // TODO: func (web *webScenario) GivenHttpServer(...) *webScenario
 
 func (web *webScenario) Header(key, value string) *webScenario {
@@ -105,7 +125,18 @@ func (web *webScenario) ExpectXmlNode(path, expectedValue string) *webScenario {
 // TODO: func (web *webScenario) ExpectTemporaryRedirect(newRoute string) *webScenario
 
 func (web *webScenario) Run() {
+	defer web.tearDown()
 	web.parent.Run()
+}
+
+func (web *webScenario) onTearDown(fn func()) {
+	web.tearDownStack = append(web.tearDownStack, fn)
+}
+
+func (web *webScenario) tearDown() {
+	for index := 0; index < len(web.tearDownStack); index++ {
+		web.tearDownStack[index]()
+	}
 }
 
 func (web *webScenario) encodeURL() string {
@@ -158,7 +189,7 @@ func (web *webScenario) assertErrorIsNil(t *testing.T, err any) {
 		return
 	}
 	if responseError := err.(error); responseError != nil {
-		t.Fatalf("web-scenario %s failed while sending request\n", web.title)
+		t.Fatalf("web-scenario %s failed while sending request\nerror: %v\n", web.title, responseError)
 		t.FailNow()
 	}
 }

@@ -18,6 +18,7 @@ type webScenario struct {
 	query            url.Values
 	form             url.Values
 	body             any
+	tearDownStack    []func()
 	expectedStatus   int
 	expectedHeaders  headerExpectations
 	expectedJsonBody any
@@ -40,6 +41,7 @@ func New(test *testing.T, title string) *webScenario {
 		query:            url.Values{},
 		form:             url.Values{},
 		body:             nil,
+		tearDownStack:    make([]func(), 0),
 		expectedStatus:   0,
 		expectedHeaders:  make(headerExpectations),
 		expectedJsonBody: nil,

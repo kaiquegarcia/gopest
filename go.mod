@@ -3,6 +3,7 @@ module github.com/kaiquegarcia/gopest
 go 1.17
 
 require (
+	github.com/go-chi/chi/v5 v5.0.7
 	github.com/gofiber/fiber/v2 v2.33.0
 	github.com/kinbiko/jsonassert v1.1.0
 	github.com/stretchr/testify v1.7.1
