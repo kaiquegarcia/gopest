@@ -102,3 +102,13 @@ func TestGetHtmlRoute(t *testing.T) {
 		ExpectHtmlNode("//div[@id='lost-div']", "nothing to see over there").
 		Run()
 }
+
+func TestGetPlainTextRoute(t *testing.T) {
+	app := fiber.New()
+	simpleRouter(app)
+	webscenario.New(t, "test GET plain-text").
+		GivenFiber(app).
+		Call(http.MethodGet, "/plain-text").
+		ExpectPlainText("Hello world!").
+		Run()
+}

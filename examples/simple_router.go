@@ -95,4 +95,12 @@ func simpleRouter(app *fiber.App) {
 			</body>
 		</html>`)
 	})
+
+	app.Get("/plain-text", func(c *fiber.Ctx) error {
+		if err := c.SendStatus(http.StatusOK); err != nil {
+			return err
+		}
+
+		return c.SendString("Hello world!")
+	})
 }

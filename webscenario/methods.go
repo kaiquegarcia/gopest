@@ -129,7 +129,11 @@ func (web *webScenario) ExpectHtmlNode(path, expectedValue string) *webScenario 
 	return web
 }
 
-// TODO: func (web *webScenario) ExpectPlainText(body string) *webScenario
+func (web *webScenario) ExpectPlainText(body string) *webScenario {
+	web.expectedPlainTextBody = body
+	return web
+}
+
 // TODO: func (web *webScenario) ExpectPermanentRedirect(newRoute string) *webScenario
 // TODO: func (web *webScenario) ExpectTemporaryRedirect(newRoute string) *webScenario
 
@@ -223,32 +227,34 @@ func (web *webScenario) assertHeaders(t *testing.T, resp *http.Response) {
 	}
 }
 
-func (web *webScenario) assertJsonBody(t *testing.T, resp *http.Response) {
-	expect := web.encodeBody(web.expectedJsonBody)
-	if expect == "" {
-		return
-	}
-
-	payload, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		t.Fatalf("web-scenario %s failed while decoding response body", web.title)
-		t.FailNow()
-	}
-
-	jsonassert.New(t).Assertf(string(payload), expect)
-}
-
-func (web *webScenario) assertXmlNodes(t *testing.T, resp *http.Response) {
-	if web.expectedXmlNodes == nil || len(web.expectedXmlNodes) == 0 {
-		return
-	}
+func (web *webScenario) decodeBody(t *testing.T, resp *http.Response) string {
+	defer resp.Body.Close()
 	payload, readErr := ioutil.ReadAll(resp.Body)
 	if readErr != nil {
 		t.Fatalf("web-scenario %s failed while decoding response body", web.title)
 		t.FailNow()
 	}
 
-	ctx, parseErr := xmlpath.Parse(strings.NewReader(string(payload)))
+	return string(payload)
+}
+
+func (web *webScenario) assertJsonBody(t *testing.T, resp *http.Response) {
+	expect := web.encodeBody(web.expectedJsonBody)
+	if expect == "" {
+		return
+	}
+
+	payload := web.decodeBody(t, resp)
+	jsonassert.New(t).Assertf(payload, expect)
+}
+
+func (web *webScenario) assertXmlNodes(t *testing.T, resp *http.Response) {
+	if web.expectedXmlNodes == nil || len(web.expectedXmlNodes) == 0 {
+		return
+	}
+
+	payload := web.decodeBody(t, resp)
+	ctx, parseErr := xmlpath.Parse(strings.NewReader(payload))
 	if parseErr != nil {
 		t.Fatalf("web-scenario %s failed - could not parse XML: %s", web.title, parseErr.Error())
 		t.FailNow()
@@ -270,13 +276,9 @@ func (web *webScenario) assertHtmlNodes(t *testing.T, resp *http.Response) {
 	if web.expectedHtmlNodes == nil || len(web.expectedHtmlNodes) == 0 {
 		return
 	}
-	payload, readErr := ioutil.ReadAll(resp.Body)
-	if readErr != nil {
-		t.Fatalf("web-scenario %s failed while decoding response body", web.title)
-		t.FailNow()
-	}
 
-	ctx, parseErr := xmlpath.ParseHTML(strings.NewReader(string(payload)))
+	payload := web.decodeBody(t, resp)
+	ctx, parseErr := xmlpath.ParseHTML(strings.NewReader(payload))
 	if parseErr != nil {
 		t.Fatalf("web-scenario %s failed - could not parse HTML: %s", web.title, parseErr.Error())
 		t.FailNow()
@@ -294,5 +296,13 @@ func (web *webScenario) assertHtmlNodes(t *testing.T, resp *http.Response) {
 	}
 }
 
-// TODO: func (web *webScenario) assertPlainTextBody(t *testing.T, resp *http.Response)
+func (web *webScenario) assertPlainTextBody(t *testing.T, resp *http.Response) {
+	if web.expectedPlainTextBody == "" {
+		return
+	}
+
+	payload := web.decodeBody(t, resp)
+	assert.Equal(t, web.expectedPlainTextBody, payload)
+}
+
 // TODO: func (web *webScenario) assertRedirect(t *testing.T, resp *http.Response)
